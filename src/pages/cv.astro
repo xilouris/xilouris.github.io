@@ -1,0 +1,224 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { profile } from '../data/profile';
+import { education, experience, skills, selectedPublications, awards, service } from '../data/cv';
+
+const sections = [
+  { id: 'education', title: 'Education', data: education },
+  { id: 'experience', title: 'Professional Experience', data: experience },
+  { id: 'skills', title: 'Skills & Expertise' },
+  { id: 'publications', title: 'Selected Publications' },
+  { id: 'awards', title: 'Awards & Honors' },
+  { id: 'service', title: 'Professional Service' },
+];
+---
+
+<BaseLayout title="Curriculum Vitae">
+  <!-- CV Header -->
+  <section class="bg-gradient-to-br from-primary-50 via-white to-accent-50 py-16 border-b border-secondary-200">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-secondary-900 mb-4">
+        Curriculum Vitae
+      </h1>
+      <p class="text-2xl text-secondary-700 mb-2">
+        {profile.name}
+      </p>
+      <p class="text-lg text-primary-700 font-medium">
+        {profile.title}
+      </p>
+      <p class="text-base text-secondary-600 mt-4">
+        {profile.affiliation} | NCSR "Demokritos"
+      </p>
+
+      <!-- Quick Nav -->
+      <div class="flex flex-wrap justify-center gap-3 mt-8">
+        {sections.map((section) => (
+          <a
+            href={`#${section.id}`}
+            class="px-4 py-2 bg-white border border-secondary-200 rounded-lg text-sm font-medium text-secondary-700 hover:bg-primary-50 hover:border-primary-300 hover:text-primary-700 transition-all no-underline"
+          >
+            {section.title}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl py-16">
+    <!-- Education Section -->
+    <section id="education" class="mb-20 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-secondary-900 mb-8 flex items-center">
+        <span class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </span>
+        Education
+      </h2>
+      <div class="space-y-8">
+        {education.items.map((item, index) => (
+          <div class="relative pl-8 pb-8 border-l-2 border-primary-200 last:border-l-0 last:pb-0">
+            <div class="absolute -left-2 top-0 w-4 h-4 rounded-full bg-primary-600 border-2 border-white shadow"></div>
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-secondary-200 hover:shadow-md transition-shadow">
+              <div class="flex flex-wrap justify-between items-start mb-3">
+                <h3 class="text-xl font-bold text-secondary-900">{item.title}</h3>
+                <span class="text-sm font-medium text-primary-700 bg-primary-50 px-3 py-1 rounded-full">
+                  {item.startDate} - {item.endDate}
+                </span>
+              </div>
+              <p class="text-base font-medium text-secondary-700 mb-1">{item.organization}</p>
+              {item.location && (
+                <p class="text-sm text-secondary-600 mb-3">{item.location}</p>
+              )}
+              {item.description && (
+                <p class="text-base text-secondary-700 mb-3">{item.description}</p>
+              )}
+              {item.details && item.details.length > 0 && (
+                <ul class="space-y-1">
+                  {item.details.map((detail) => (
+                    <li class="text-sm text-secondary-600 flex items-start">
+                      <span class="text-primary-600 mr-2">•</span>
+                      {detail}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="h-px bg-gradient-to-r from-transparent via-secondary-300 to-transparent mb-20"></div>
+
+    <!-- Professional Experience Section -->
+    <section id="experience" class="mb-20 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-secondary-900 mb-8 flex items-center">
+        <span class="w-12 h-12 rounded-full bg-accent-100 flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-accent-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </span>
+        Professional Experience
+      </h2>
+      <div class="space-y-8">
+        {experience.items.map((item) => (
+          <div class="relative pl-8 pb-8 border-l-2 border-accent-200 last:border-l-0 last:pb-0">
+            <div class="absolute -left-2 top-0 w-4 h-4 rounded-full bg-accent-600 border-2 border-white shadow"></div>
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-secondary-200 hover:shadow-md transition-shadow">
+              <div class="flex flex-wrap justify-between items-start mb-3">
+                <h3 class="text-xl font-bold text-secondary-900">{item.title}</h3>
+                <span class="text-sm font-medium text-accent-700 bg-accent-50 px-3 py-1 rounded-full">
+                  {item.startDate} - {item.endDate}
+                </span>
+              </div>
+              <p class="text-base font-medium text-secondary-700 mb-1">{item.organization}</p>
+              {item.location && (
+                <p class="text-sm text-secondary-600 mb-3">{item.location}</p>
+              )}
+              {item.description && (
+                <p class="text-base text-secondary-700 mb-3">{item.description}</p>
+              )}
+              {item.details && item.details.length > 0 && (
+                <ul class="space-y-2">
+                  {item.details.map((detail) => (
+                    <li class="text-sm text-secondary-700 flex items-start">
+                      <span class="text-accent-600 mr-2">▸</span>
+                      {detail}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="h-px bg-gradient-to-r from-transparent via-secondary-300 to-transparent mb-20"></div>
+
+    <!-- Skills & Expertise Section -->
+    <section id="skills" class="mb-20 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-secondary-900 mb-8 flex items-center">
+        <span class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+          </svg>
+        </span>
+        Skills & Expertise
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {Object.entries(skills).map(([category, skillList]) => (
+          <div class="bg-white rounded-lg p-6 shadow-sm border border-secondary-200">
+            <h3 class="text-lg font-bold text-secondary-900 mb-4">{category}</h3>
+            <div class="flex flex-wrap gap-2">
+              {skillList.map((skill) => (
+                <span class="bg-primary-50 text-primary-800 px-3 py-1.5 rounded-full text-sm font-medium border border-primary-200">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="h-px bg-gradient-to-r from-transparent via-secondary-300 to-transparent mb-20"></div>
+
+    <!-- Selected Publications -->
+    <section id="publications" class="mb-20 scroll-mt-24">
+      <h2 class="text-3xl font-bold text-secondary-900 mb-4 flex items-center">
+        <span class="w-12 h-12 rounded-full bg-accent-100 flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-accent-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </span>
+        Selected Publications
+      </h2>
+      <p class="text-base text-secondary-600 mb-8">
+        For a complete list, please visit my <a href={profile.socialLinks.googleScholar} target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-700 font-medium">Google Scholar profile</a>.
+      </p>
+      <div class="space-y-4">
+        {selectedPublications.map((pub) => (
+          <div class="bg-white rounded-lg p-5 shadow-sm border border-secondary-200 hover:shadow-md transition-shadow">
+            <h3 class="text-base font-semibold text-secondary-900 mb-2">{pub.title}</h3>
+            <p class="text-sm text-secondary-700 mb-2">{pub.authors}</p>
+            <p class="text-sm text-secondary-600">
+              <span class="font-medium">{pub.venue}</span>, {pub.year}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Note about content -->
+    <div class="bg-primary-50 border border-primary-200 rounded-lg p-6 text-center">
+      <p class="text-sm text-secondary-700">
+        This CV page is currently using placeholder content. Please update the data in
+        <code class="bg-white px-2 py-1 rounded text-xs text-secondary-800">/src/data/cv.ts</code>
+        with your actual information.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Print styles for CV */
+  @media print {
+    header,
+    footer {
+      display: none;
+    }
+
+    .no-print {
+      display: none;
+    }
+
+    section {
+      page-break-inside: avoid;
+    }
+  }
+</style>
