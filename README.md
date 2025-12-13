@@ -1,43 +1,132 @@
-# Astro Starter Kit: Minimal
+# Personal Academic Website
 
-```sh
-npm create astro@latest -- --template minimal
+This is the source code for my personal academic website, built with [Astro](https://astro.build) and deployed on GitHub Pages.
+
+## 🚀 Features
+
+- **Automated Publications**: Syncs with Google Scholar to automatically update publication list and citations
+- **Academic Design**: Professional theme tailored for research and academia
+- **Responsive**: Mobile-friendly design that works on all devices
+- **Blog**: Markdown-based blog system for research updates and news
+- **Fast**: Built with Astro for optimal performance
+
+## 📦 Project Structure
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
 /
-├── public/
+├── public/              # Static assets (images, files, etc.)
 ├── src/
-│   └── pages/
-│       └── index.astro
+│   ├── components/      # Reusable Astro components
+│   ├── layouts/         # Page layouts
+│   ├── pages/          # Site pages (routes)
+│   ├── data/           # Structured data (profile, publications, etc.)
+│   ├── styles/         # Global styles and Tailwind CSS
+│   └── types/          # TypeScript type definitions
+├── .github/
+│   └── workflows/      # GitHub Actions for deployment
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🛠️ Development
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Prerequisites
 
-Any static assets, like images, can be placed in the `public/` directory.
+- Node.js 18+ and npm
+- Git
 
-## 🧞 Commands
+### Local Development
 
-All commands are run from the root of the project, from a terminal:
+```bash
+# Install dependencies
+npm install
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+# Start development server
+npm run dev
 
-## 👀 Want to learn more?
+# Build for production
+npm run build
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+# Preview production build
+npm run preview
+```
+
+The site will be available at `http://localhost:4321`
+
+## 🚢 Deployment
+
+The site automatically deploys to GitHub Pages when changes are pushed to the main branch via GitHub Actions.
+
+### Manual Deployment
+
+```bash
+# Build the site
+npm run build
+
+# The output will be in ./dist/ directory
+```
+
+## 📝 Content Management
+
+### Updating Profile Information
+
+Edit `/src/data/profile.ts` to update your personal information, affiliation, and social links.
+
+### Adding Publications
+
+Publications are automatically synced from Google Scholar via GitHub Actions. The workflow runs weekly and on manual trigger.
+
+To manually update:
+```bash
+npm run sync-scholar
+```
+
+### Writing Blog Posts
+
+Create a new `.md` file in `/src/pages/blog/` with frontmatter:
+
+```markdown
+---
+title: "Your Post Title"
+publishDate: "2024-01-01"
+description: "Brief description"
+tags: ["research", "networks"]
+---
+
+Your content here...
+```
+
+### Updating CV
+
+Edit `/src/data/cv.ts` or place a PDF file in `/public/files/cv.pdf`
+
+## 🔧 Configuration
+
+- **Site URL**: Update in `astro.config.mjs`
+- **Colors**: Modify theme in `/src/styles/global.css`
+- **Navigation**: Edit nav items in `/src/components/Header.astro`
+
+## 📊 Google Scholar Integration
+
+The site uses a custom GitHub Action to automatically fetch publications and citations from Google Scholar. Configure your Scholar profile URL in:
+
+- `/src/data/profile.ts` - Add your Google Scholar URL
+- `.github/workflows/sync-scholar.yml` - Configure sync schedule
+
+## 🤝 Contributing
+
+This is a personal website, but feel free to use it as a template for your own academic site!
+
+## 📄 License
+
+MIT License - feel free to use this as a template for your own academic website.
+
+## 🙏 Acknowledgments
+
+Built with:
+- [Astro](https://astro.build/) - Web framework
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [GitHub Pages](https://pages.github.com/) - Hosting
+
+---
+
+© 2024 - Built with Astro and deployed on GitHub Pages
