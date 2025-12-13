@@ -11,7 +11,7 @@ next-generation network architectures, network security, and emerging technologi
 telecommunications infrastructure.`,
   email: 'xilouris@iit.demokritos.gr', // TODO: Add your email
   location: 'Athens, Greece',
-  profileImage: '/images/profile.jpg',
+  profileImage: '/images/profile.jpeg',
   cvUrl: '/files/cv.pdf',
   socialLinks: {
     googleScholar: 'https://scholar.google.com/citations?user=eydLJrwAAAAJ&hl=en', // TODO: Add Google Scholar URL
