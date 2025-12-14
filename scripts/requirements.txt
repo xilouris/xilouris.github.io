@@ -1,0 +1,5 @@
+# Google Scholar scraper
+scholarly>=1.7.11
+
+# Optional: For better rate limiting handling
+requests>=2.31.0
