@@ -17,7 +17,7 @@ telecommunications infrastructure.`,
     googleScholar: 'https://scholar.google.com/citations?user=eydLJrwAAAAJ&hl=en', // TODO: Add Google Scholar URL
     orcid: 'https://orcid.org/0000-0003-2695-4534', // TODO: Add ORCID if available
     researchGate: '', // TODO: Add ResearchGate if available
-    linkedin: '', // TODO: Add LinkedIn
+    linkedin: 'https://www.linkedin.com/in/xilouris/', // TODO: Add LinkedIn
     github: 'https://github.com/xilouris',
     twitter: 'https://x.com/xilouris', // Optional
   },
