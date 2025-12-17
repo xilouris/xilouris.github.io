@@ -1,101 +1,25 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { profile } from '../data/profile';
+import { publications, scholarStats } from '../data/publications-auto';
 
-// This will be replaced with actual Google Scholar data
-const publications = [
-  {
-    id: 1,
-    title: 'Network Slicing for 5G and Beyond: A Survey',
-    authors: 'G. Xilouris, et al.',
-    venue: 'IEEE Communications Surveys & Tutorials',
-    year: 2023,
-    type: 'journal',
-    citations: 125,
-    url: '',
-    abstract: 'A comprehensive survey on network slicing technologies for 5G and beyond networks...',
-  },
-  {
-    title: 'Security and Trust in 5G Networks: Challenges and Solutions',
-    authors: 'G. Xilouris, E. Trouva, et al.',
-    venue: 'IEEE Network Magazine',
-    year: 2022,
-    type: 'journal',
-    citations: 89,
-    url: '',
-    abstract: 'This paper addresses security challenges in 5G networks and proposes solutions...',
-  },
-  {
-    title: 'Edge Computing Architectures for 5G: A Survey',
-    authors: 'G. Xilouris, et al.',
-    venue: 'IEEE Access',
-    year: 2021,
-    type: 'journal',
-    citations: 156,
-    url: '',
-    abstract: 'Survey of edge computing architectures and their role in 5G networks...',
-  },
-  {
-    title: 'Network Function Virtualization: State-of-the-art and Research Challenges',
-    authors: 'G. Xilouris, R. Trivisonno, et al.',
-    venue: 'IEEE Communications Magazine',
-    year: 2020,
-    type: 'journal',
-    citations: 234,
-    url: '',
-    abstract: 'Comprehensive overview of NFV technologies and research challenges...',
-  },
-  {
-    title: 'Orchestration and Management of Multi-domain End-to-End Network Slices',
-    authors: 'G. Xilouris, et al.',
-    venue: 'IEEE GLOBECOM',
-    year: 2019,
-    type: 'conference',
-    citations: 78,
-    url: '',
-    abstract: 'Novel approach for orchestrating multi-domain network slices...',
-  },
-  {
-    title: 'Vertical Applications and Services in 5G Networks',
-    authors: 'G. Xilouris, et al.',
-    venue: 'IEEE ICC',
-    year: 2018,
-    type: 'conference',
-    citations: 92,
-    url: '',
-    abstract: 'Analysis of vertical applications enabled by 5G network capabilities...',
-  },
-  {
-    title: 'SDN and NFV Integration for Next-Generation Networks',
-    authors: 'G. Xilouris, et al.',
-    venue: 'IEEE/IFIP Network Operations and Management Symposium (NOMS)',
-    year: 2017,
-    type: 'conference',
-    citations: 167,
-    url: '',
-    abstract: 'Integration approaches for SDN and NFV in next-generation networks...',
-  },
-  {
-    title: 'Quality of Service in Cloud-based Network Infrastructures',
-    authors: 'G. Xilouris, et al.',
-    venue: 'Springer Book Chapter',
-    year: 2016,
-    type: 'book',
-    citations: 45,
-    url: '',
-    abstract: 'QoS mechanisms for cloud-based network infrastructures...',
-  },
-];
+// Sort publications by year (newest first) and citations
+const sortedPublications = [...publications].sort((a, b) => {
+  if (b.year !== a.year) return b.year - a.year;
+  return b.citations - a.citations;
+});
 
 // Get unique years for filtering
-const years = [...new Set(publications.map(p => p.year))].sort((a, b) => b - a);
+const years = [...new Set(sortedPublications.map(p => p.year))].sort((a, b) => b - a);
 
-// Calculate statistics
-const totalPublications = publications.length;
-const totalCitations = publications.reduce((sum, p) => sum + p.citations, 0);
-const journalPapers = publications.filter(p => p.type === 'journal').length;
-const conferencePapers = publications.filter(p => p.type === 'conference').length;
-const bookChapters = publications.filter(p => p.type === 'book').length;
+// Use statistics from Google Scholar
+const totalPublications = scholarStats.totalPublications;
+const totalCitations = scholarStats.totalCitations;
+const hIndex = scholarStats.hIndex;
+const i10Index = scholarStats.i10Index;
+const journalPapers = sortedPublications.filter(p => p.type === 'journal').length;
+const conferencePapers = sortedPublications.filter(p => p.type === 'conference').length;
+const bookChapters = sortedPublications.filter(p => p.type === 'book').length;
 ---
 
 <BaseLayout title="Publications">
@@ -119,22 +43,40 @@ const bookChapters = publications.filter(p => p.type === 'book').length;
       </p>
 
       <!-- Statistics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-        <div class="bg-white rounded-lg p-6 text-center shadow-sm border border-secondary-200">
-          <div class="text-3xl font-bold text-primary-700 mb-2">{totalPublications}+</div>
-          <div class="text-sm text-secondary-600">Total Papers</div>
+      <div class="space-y-4 max-w-5xl mx-auto">
+        <!-- Top row: Main metrics -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-white rounded-lg p-6 text-center shadow-sm border border-secondary-200">
+            <div class="text-3xl font-bold text-primary-700 mb-2">{totalPublications}</div>
+            <div class="text-sm text-secondary-600">Total Papers</div>
+          </div>
+          <div class="bg-white rounded-lg p-6 text-center shadow-sm border border-secondary-200">
+            <div class="text-3xl font-bold text-accent-700 mb-2">{totalCitations}</div>
+            <div class="text-sm text-secondary-600">Citations</div>
+          </div>
+          <div class="bg-white rounded-lg p-6 text-center shadow-sm border border-secondary-200">
+            <div class="text-3xl font-bold text-primary-700 mb-2">{hIndex}</div>
+            <div class="text-sm text-secondary-600">h-index</div>
+          </div>
+          <div class="bg-white rounded-lg p-6 text-center shadow-sm border border-secondary-200">
+            <div class="text-3xl font-bold text-accent-700 mb-2">{i10Index}</div>
+            <div class="text-sm text-secondary-600">i10-index</div>
+          </div>
         </div>
-        <div class="bg-white rounded-lg p-6 text-center shadow-sm border border-secondary-200">
-          <div class="text-3xl font-bold text-accent-700 mb-2">{totalCitations}+</div>
-          <div class="text-sm text-secondary-600">Citations</div>
-        </div>
-        <div class="bg-white rounded-lg p-6 text-center shadow-sm border border-secondary-200">
-          <div class="text-3xl font-bold text-primary-700 mb-2">{journalPapers}</div>
-          <div class="text-sm text-secondary-600">Journals</div>
-        </div>
-        <div class="bg-white rounded-lg p-6 text-center shadow-sm border border-secondary-200">
-          <div class="text-3xl font-bold text-accent-700 mb-2">{conferencePapers}+</div>
-          <div class="text-sm text-secondary-600">Conferences</div>
+        <!-- Bottom row: Publication types -->
+        <div class="grid grid-cols-3 gap-4">
+          <div class="bg-white rounded-lg p-4 text-center shadow-sm border border-secondary-200">
+            <div class="text-2xl font-bold text-primary-600 mb-1">{journalPapers}</div>
+            <div class="text-xs text-secondary-600">Journal Papers</div>
+          </div>
+          <div class="bg-white rounded-lg p-4 text-center shadow-sm border border-secondary-200">
+            <div class="text-2xl font-bold text-accent-600 mb-1">{conferencePapers}</div>
+            <div class="text-xs text-secondary-600">Conference Papers</div>
+          </div>
+          <div class="bg-white rounded-lg p-4 text-center shadow-sm border border-secondary-200">
+            <div class="text-2xl font-bold text-secondary-600 mb-1">{bookChapters}</div>
+            <div class="text-xs text-secondary-600">Book Chapters</div>
+          </div>
         </div>
       </div>
     </div>
@@ -198,7 +140,7 @@ const bookChapters = publications.filter(p => p.type === 'book').length;
 
     <!-- Publications List -->
     <div id="publications-list" class="space-y-6">
-      {publications.map((pub) => (
+      {sortedPublications.map((pub) => (
         <article
           class="publication-item bg-white rounded-lg p-6 shadow-sm border border-secondary-200 hover:shadow-md transition-shadow"
           data-type={pub.type}
