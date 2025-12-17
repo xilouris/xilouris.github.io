@@ -45,12 +45,27 @@ export interface BlogPost {
 }
 
 export interface Link {
+  id: string;
   title: string;
   url: string;
-  description?: string;
-  category: string;
+  description: string;
+  category: LinkCategoryType;
   tags?: string[];
+  featured?: boolean;
+  dateAdded?: string;
 }
+
+export type LinkCategoryType =
+  | '5G/6G Research'
+  | 'Standards & Specifications'
+  | 'Tools & Frameworks'
+  | 'Organizations & Consortia'
+  | 'Educational Resources'
+  | 'Research Databases'
+  | 'Cybersecurity'
+  | 'Cloud & Edge Computing'
+  | 'Network Management'
+  | 'AI & Machine Learning';
 
 export interface Profile {
   name: string;
