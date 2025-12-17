@@ -64,14 +64,36 @@ def parse_publication(pub: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Formatted publication dictionary
     """
-    # Determine publication type based on venue
+    # Get venue and title for type detection
     venue = pub.get('bib', {}).get('venue', '').lower()
+    title = pub.get('bib', {}).get('title', '').lower()
     pub_type = 'conference'  # default
 
-    if any(keyword in venue for keyword in ['journal', 'transactions', 'magazine', 'letters']):
+    # Enhanced journal detection
+    journal_keywords = [
+        'journal', 'transactions', 'magazine', 'letters', 'review',
+        'proceedings', 'jnl', 'trans.', 'ieee access', 'nature',
+        'science', 'communications', 'annals', 'bulletin'
+    ]
+
+    # Conference keywords for better detection
+    conference_keywords = [
+        'conference', 'symposium', 'workshop', 'congress', 'summit',
+        'meeting', 'colloquium', 'seminar'
+    ]
+
+    # Book keywords
+    book_keywords = ['book', 'chapter', 'handbook', 'encyclopedia']
+
+    # Detect type based on venue and title
+    if any(keyword in venue for keyword in journal_keywords):
         pub_type = 'journal'
-    elif any(keyword in venue for keyword in ['book', 'chapter']):
+    elif any(keyword in venue for keyword in book_keywords):
         pub_type = 'book'
+    elif any(keyword in title for keyword in book_keywords):
+        pub_type = 'book'
+    elif any(keyword in venue for keyword in conference_keywords):
+        pub_type = 'conference'
 
     # Get year
     year_str = pub.get('bib', {}).get('pub_year', '')
@@ -80,9 +102,16 @@ def parse_publication(pub: Dict[str, Any]) -> Dict[str, Any]:
     except (ValueError, TypeError):
         year = 0
 
+    # Get authors - handle list or string
+    authors_raw = pub.get('bib', {}).get('author', 'Unknown')
+    if isinstance(authors_raw, list):
+        authors = ', '.join(authors_raw)
+    else:
+        authors = authors_raw
+
     return {
         'title': pub.get('bib', {}).get('title', 'Untitled'),
-        'authors': pub.get('bib', {}).get('author', 'Unknown'),
+        'authors': authors,
         'venue': pub.get('bib', {}).get('venue', 'Unknown Venue'),
         'year': year,
         'type': pub_type,
@@ -160,6 +189,37 @@ export const publications = [
         sys.exit(1)
 
 
+def remove_duplicates(publications: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Remove duplicate publications based on title similarity
+
+    Args:
+        publications: List of publication dictionaries
+
+    Returns:
+        List of unique publications
+    """
+    seen_titles = set()
+    unique_pubs = []
+    duplicates_removed = 0
+
+    for pub in publications:
+        # Normalize title for comparison
+        title_normalized = pub['title'].lower().strip().replace(' ', '')
+
+        if title_normalized not in seen_titles:
+            seen_titles.add(title_normalized)
+            unique_pubs.append(pub)
+        else:
+            duplicates_removed += 1
+            print(f"    ⚠ Removing duplicate: {pub['title'][:50]}...")
+
+    if duplicates_removed > 0:
+        print(f"  Removed {duplicates_removed} duplicate(s)")
+
+    return unique_pubs
+
+
 def main():
     """Main function"""
     # Configuration
@@ -181,25 +241,66 @@ def main():
     print("Fetching publications...")
     publications = []
 
+    # Track statistics
+    fetch_success = 0
+    fetch_failed = 0
+
     try:
+        total_pubs = len(author.get('publications', []))
+
         for i, pub in enumerate(author.get('publications', []), 1):
-            print(f"  [{i}] Processing: {pub.get('bib', {}).get('title', 'Unknown')[:60]}...")
+            title = pub.get('bib', {}).get('title', 'Unknown')[:60]
+            print(f"  [{i}/{total_pubs}] {title}...")
 
-            # Fill publication details
-            try:
-                filled_pub = scholarly.fill(pub)
-                parsed_pub = parse_publication(filled_pub)
-                publications.append(parsed_pub)
-            except Exception as e:
-                print(f"    ⚠ Warning: Could not fetch details: {e}")
-                # Use basic info if detailed fetch fails
-                parsed_pub = parse_publication(pub)
-                publications.append(parsed_pub)
+            # Fill publication details with retry
+            max_retries = 2
+            for attempt in range(max_retries):
+                try:
+                    filled_pub = scholarly.fill(pub)
+                    parsed_pub = parse_publication(filled_pub)
 
-        print(f"✓ Fetched {len(publications)} publications")
+                    # Log type detection for debugging
+                    venue = parsed_pub.get('venue', 'Unknown')
+                    if venue != 'Unknown Venue':
+                        print(f"      Type: {parsed_pub['type']} | Venue: {venue[:40]}")
+
+                    publications.append(parsed_pub)
+                    fetch_success += 1
+                    break  # Success, exit retry loop
+
+                except Exception as e:
+                    if attempt < max_retries - 1:
+                        print(f"      Retry {attempt + 1}/{max_retries}...")
+                        continue
+                    else:
+                        print(f"      ⚠ Using basic info (fetch failed)")
+                        # Use basic info if all retries fail
+                        parsed_pub = parse_publication(pub)
+                        publications.append(parsed_pub)
+                        fetch_failed += 1
+
+        print(f"\n✓ Fetched {len(publications)} publications")
+        print(f"  Detailed fetch success: {fetch_success}")
+        print(f"  Basic info only: {fetch_failed}")
+
     except Exception as e:
         print(f"✗ Error fetching publications: {e}")
         sys.exit(1)
+
+    # Remove duplicates
+    print("\nRemoving duplicates...")
+    publications = remove_duplicates(publications)
+    print(f"✓ Final count: {len(publications)} unique publications")
+
+    # Count by type for reporting
+    type_counts = {}
+    for pub in publications:
+        pub_type = pub['type']
+        type_counts[pub_type] = type_counts.get(pub_type, 0) + 1
+
+    print("\nPublication types:")
+    for pub_type, count in sorted(type_counts.items()):
+        print(f"  {pub_type.capitalize()}: {count}")
 
     # Generate TypeScript file
     generate_typescript_file(author, publications, OUTPUT_PATH)
